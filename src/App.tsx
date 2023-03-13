@@ -1,16 +1,27 @@
-import React, { useState, useMemo } from 'react';
-import reactLogo from './assets/react.svg';
+import React, { useState } from 'react';
+import massa from './assets/massa-logo.png';
 import './App.css';
 import {
-    Client,
     ClientFactory,
     DefaultProviderUrls,
     IAccount,
     WalletClient,
-    Args,
+    INodeStatus,
 } from '@massalabs/massa-web3';
 
-export const baseAccountSecretKey = 'S13iFJarF4v6CxYPeguUQHqkxDdGZgFhrsiEMznbnS3is9aXFps';
+export const BASE_ACCOUNT_SECRET_KEY = 'S13iFJarF4v6CxYPeguUQHqkxDdGZgFhrsiEMznbnS3is9aXFps';
+
+const constructWeb3Client = async () => {
+    const baseAccount: IAccount = await WalletClient.getAccountFromSecretKey(
+        BASE_ACCOUNT_SECRET_KEY,
+    );
+    const web3Client = await ClientFactory.createDefaultClient(
+        DefaultProviderUrls.TESTNET,
+        true,
+        baseAccount,
+    );
+    return web3Client;
+};
 
 function useAsyncEffect(
     fn: () => Promise<void | (() => void)>,
@@ -25,52 +36,45 @@ function useAsyncEffect(
     }, dependencies);
 }
 
-function App() {
-    const [count, setCount] = useState(0);
-    const [web3Client, setWeb3Client] = useState<Client | null>(null);
+const getNodeOverview = (nodeStatus: INodeStatus | null): JSX.Element => {
+    if (!nodeStatus) {
+        return <React.Fragment>{"Getting Massa's Node Status..."}</React.Fragment>;
+    }
+    return (
+        <React.Fragment>
+            Massa Net Version: {nodeStatus?.version}
+            <br />
+            Massa Net Node Id: {nodeStatus?.node_id}
+            <br />
+            Massa Net Node Ip: {nodeStatus?.node_ip}
+            <br />
+            Massa Net Time: {nodeStatus?.current_time}
+            <br />
+            Massa Net Cycle: {nodeStatus?.current_cycle}
+            <br />
+        </React.Fragment>
+    );
+};
 
-    const memoWeb3Client: Client | null = useMemo(() => web3Client, []);
+function App() {
+    const [nodeStatus, setNodeStatus] = useState<INodeStatus | null>(null);
 
     useAsyncEffect(async () => {
         try {
-            const baseAccount: IAccount = await WalletClient.getAccountFromSecretKey(
-                baseAccountSecretKey,
-            );
-            if (!memoWeb3Client) {
-                const web3Client = await ClientFactory.createDefaultClient(
-                    DefaultProviderUrls.TESTNET,
-                    true,
-                    baseAccount,
-                );
-                const nodeStatus = await web3Client.publicApi().getNodeStatus();
-                console.log('NODE STATUS', nodeStatus.last_slot);
-                setWeb3Client(memoWeb3Client);
-                const args = new Args().addF32(12.0).serialize();
-            }
+            const web3Client = await constructWeb3Client();
+            const nodeStatus = await web3Client.publicApi().getNodeStatus();
+            setNodeStatus(nodeStatus);
         } catch (error) {
             console.error(error);
         }
     }, []);
 
     return (
-        <div className="App">
-            <div>
-                <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-                    <img src="/vite.svg" className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://reactjs.org" target="_blank" rel="noreferrer">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
-            </div>
-            <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-        </div>
+        <React.Fragment>
+            <img src={massa} className="App-logo" alt="logo" />
+            <hr />
+            {getNodeOverview(nodeStatus)}
+        </React.Fragment>
     );
 }
 

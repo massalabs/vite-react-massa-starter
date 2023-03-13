@@ -27,6 +27,10 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:prettier/recommended',
+    'eslint-config-prettier',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+    'plugin:@typescript-eslint/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -35,6 +39,14 @@ module.exports = {
     },
     ecmaVersion: 2022,
     sourceType: 'module',
+    settings: {
+      'import/resolver': {
+        node: {
+          paths: ['src'],
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+      },
+    },
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
