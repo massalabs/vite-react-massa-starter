@@ -1,13 +1,9 @@
 import { defineConfig } from 'vite';
-// import nodePolyfills0 from "rollup-plugin-node-polyfills";
-// import nodePolyfills1 from 'rollup-plugin-polyfill-node';
 import nodePolyfills2 from 'vite-plugin-node-stdlib-browser';
 import inject from '@rollup/plugin-inject';
 import react from '@vitejs/plugin-react';
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs';
 import { resolve } from 'path';
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
-import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 import nodeStdlibBrowser from 'node-stdlib-browser';
 
 // https://vitejs.dev/config/
