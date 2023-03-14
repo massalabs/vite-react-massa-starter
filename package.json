@@ -1,8 +1,8 @@
 {
-  "name": "react-vite-app",
+  "name": "vite-react-massa-starter",
   "version": "1.0.0",
   "type": "module",
-  "description": "massa's web3 sdk client",
+  "description": "Massa Starter created with Vite React + Typescript",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -60,7 +60,6 @@
     "prettier": "^2.8.4",
     "prettier-eslint": "^15.0.1",
     "prettier-standard": "^16.4.1",
-
 
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
